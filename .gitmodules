@@ -1,4 +1,4 @@
 [submodule "goquery"]
     path = golang/myimage/src/github.com/opesun/goquery
-    url = git@github.com:crufter/goquery.git
+    url = https://github.com/crufter/goquery.git
 
