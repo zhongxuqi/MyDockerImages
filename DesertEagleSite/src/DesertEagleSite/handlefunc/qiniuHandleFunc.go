@@ -22,7 +22,6 @@ type MyQiniuResponse struct {
 }
 
 func initQiniu() {
-	urlFuncMap = make(map[string] func(w http.ResponseWriter, r *http.Request))
 	urlFuncMap["qiniu/list"] = getListToken
 	urlFuncMap["qiniu/upload"] = getUploadToken
 	urlFuncMap["qiniu/download"] = getDownloadToken
