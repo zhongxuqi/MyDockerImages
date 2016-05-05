@@ -3,7 +3,7 @@ FROM golang:latest
 COPY src $GOPATH/src
 COPY bin $GOPATH/bin
 
-EXPOSE 8089 37077
+EXPOSE 8089
 
 ENV PATH .:$PATH
 
