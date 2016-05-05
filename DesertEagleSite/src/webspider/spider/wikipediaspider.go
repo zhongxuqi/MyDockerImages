@@ -7,7 +7,7 @@ import (
 )
 
 func GetWikipediaData(keyword string) ([]DataItem, string, error) {
-	resp, err := goquery.ParseUrl("http://wc.yooooo.us/w/index.php?title=Special%3A%E6%90%9C%E7%B4%A2&profile=default&fulltext=Search&search=" + keyword)
+	resp, err := goquery.ParseUrl("https://wuu.wikipedia.org/w/index.php?title=Special:搜索&profile=default&fulltext=Search&search=" + keyword)
 	if err != nil {
 		return nil, "", err
 	}
