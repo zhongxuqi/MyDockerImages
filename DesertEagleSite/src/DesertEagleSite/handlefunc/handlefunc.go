@@ -37,6 +37,7 @@ func init() {
 	urlFuncMap["app/custom_search"] = CustomSearch
 
 	initFile();
+	initQiniu();
 }
 
 func writeResult(w http.ResponseWriter, r *http.Request, resItems []spider.DataItem, nextPage string, err error) {
@@ -82,7 +83,7 @@ func writeLog(r *http.Request) {
 
 func HandleMain(w http.ResponseWriter, r *http.Request) {
 	writeLog(r)
-	
+
 	// go to file server
 	if r.URL.Path == "/" {
 		t, err := template.ParseFiles("html/index.html")
