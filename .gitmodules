@@ -4,3 +4,9 @@
 [submodule "DesertEagleSite/src/qiniupkg.com/x"]
 	path = DesertEagleSite/src/qiniupkg.com/x
 	url = https://github.com/qiniu/x.git
+[submodule "DesertEagleSite/src/golang/x/net"]
+	path = DesertEagleSite/src/golang/x/net
+	url = https://github.com/golang/net.git
+[submodule "DesertEagleSite/src/PuerkitoBio/goquery"]
+	path = DesertEagleSite/src/PuerkitoBio/goquery
+	url = https://github.com/PuerkitoBio/goquery.git
