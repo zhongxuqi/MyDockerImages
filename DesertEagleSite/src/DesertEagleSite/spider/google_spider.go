@@ -25,7 +25,8 @@ func ParseGoogleHTML(resp *goquery.Document) ([]DataItem, string, error) {
   resItems := make([]DataItem, 0)
   resp.Find(".g").Each(func(i int, s *goquery.Selection) {
     resItem := DataItem{}
-    resItem.Title = s.Find(".r a").First().Text()
+    resItem.Title = strings.Replace(strings.Trim(
+			s.Find(".r a").First().Text(), " \n"), "\n", " ", -1)
     resItem.Link = s.Find(".r a").First().AttrOr("href", "")
     startIndex := strings.Index(resItem.Link, "http://")
     if startIndex < 0 {

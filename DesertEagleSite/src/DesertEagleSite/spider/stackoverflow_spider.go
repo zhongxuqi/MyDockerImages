@@ -25,9 +25,10 @@ func ParseStackOverflowHTML(resp *goquery.Document) ([]DataItem, string, error) 
 	resItems := make([]DataItem, 0)
   resp.Find("#questions .question-summary").Each(func(i int, s *goquery.Selection) {
     resItem := DataItem{}
-    resItem.Title = s.Find(".summary h3 a").First().Text()
+    resItem.Title = strings.Replace(strings.Trim(
+			s.Find(".summary h3 a").First().Text(), " \n"), "\n", " ", -1)
     resItem.Link = "http://stackoverflow.com" +
-    s.Find(".summary h3 a").First().AttrOr("href", "")
+    	s.Find(".summary h3 a").First().AttrOr("href", "")
 		if len(s.Find(".excerpt").Nodes) > 0 {
     	resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find(".excerpt").Text(), " \n"), "\n", " ", -1)

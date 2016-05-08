@@ -25,7 +25,8 @@ func ParseJianShuHTML(resp *goquery.Document) ([]DataItem, string, error) {
 	resItems := make([]DataItem, 0)
   resp.Find("ul.list li").Each(func(i int, s *goquery.Selection) {
     resItem := DataItem{}
-    resItem.Title = s.Find("h4.title a").First().Text()
+    resItem.Title = strings.Replace(strings.Trim(
+			s.Find("h4.title a").First().Text(), " \n"), "\n", " ", -1)
     resItem.Link = s.Find("h4.title a").First().AttrOr("href", "")
 		if len(s.Find("p").Nodes) > 0 {
     	resItem.Abstract = strings.Replace(strings.Trim(

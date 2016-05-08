@@ -56,9 +56,10 @@ func ParseGithubHTML(resp *goquery.Document) ([]DataItem, string, error) {
 	resItems := make([]DataItem, 0)
   resp.Find(".repo-list .repo-list-item").Each(func(i int, s *goquery.Selection) {
     resItem := DataItem{}
-    resItem.Title = s.Find("h3 a").First().Text()
+    resItem.Title = strings.Replace(strings.Trim(
+			s.Find("h3 a").First().Text(), " \n"), "\n", " ", -1)
     resItem.Link = "https://github.com" +
-    s.Find("h3 a").First().AttrOr("href", "")
+      s.Find("h3 a").First().AttrOr("href", "")
 		if len(s.Find(".repo-list-description").Nodes) > 0 {
     	resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find(".repo-list-description").Text(), " \n"), "\n", " ", -1)

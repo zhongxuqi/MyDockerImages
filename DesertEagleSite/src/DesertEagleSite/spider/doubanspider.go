@@ -14,7 +14,8 @@ func GetDoubanData(keyword string) ([]DataItem, string, error) {
 	resItems := make([]DataItem, 0)
   resp.Find("div.result").Each(func(i int, s *goquery.Selection) {
     resItem := DataItem{}
-    resItem.Title = s.Find("div.title h3 a").First().Text()
+    resItem.Title = strings.Replace(strings.Trim(
+			s.Find("div.title h3 a").First().Text(), " \n"), "\n", " ", -1)
     resItem.Link = s.Find("div.title h3 a").First().AttrOr("href", "")
 		if len(s.Find("div.content p").Nodes) > 0 {
     	resItem.Abstract = strings.Replace(strings.Trim(

@@ -52,32 +52,16 @@ func ParseZhihuHTML(resp *http.Response) ([]DataItem, string, error) {
 			continue
 		}
 		resItem := DataItem{}
-    resItem.Title = doc.Find("div.title a").First().Text()
-    resItem.Link = "http://www.zhihu.com" + doc.Find("div.title a").First().AttrOr("href", "")
+    resItem.Title = strings.Replace(strings.Trim(
+			doc.Find("div.title a").First().Text(), " \n"), "\n", " ", -1)
+    resItem.Link = "http://www.zhihu.com" +
+			doc.Find("div.title a").First().AttrOr("href", "")
 		if len(doc.Find(".summary").Nodes) > 0 {
     	resItem.Abstract = strings.Replace(strings.Trim(
 				doc.Find(".summary").Text(), " \n"), "\n", " ", -1)
 		}
     resItem.Image = doc.Find("img").AttrOr("src", "")
     resItems = append(resItems, resItem)
-
-		// itemNodes, err := goquery.ParseString(htmlnode)
-		// if err != nil {
-		// 	return nil, "", err
-		// }
-		// title := itemNodes.Find("div.title a")
-		// if len(title) > 0 {
-		// 	var b bytes.Buffer
-		// 	text(&b, title[0])
-		// 	resItems[i].Title = b.String()
-		// 	resItems[i].Link = "http://www.zhihu.com" + title.Attrs("href")[0]
-		// }
-		// abstract := itemNodes.Find(".summary")
-		// if len(abstract) > 0 {
-		// 	var b bytes.Buffer
-		// 	text(&b, abstract[0])
-		// 	resItems[i].Abstract = strings.Replace(strings.Trim(b.String(), " \n"), "\n", " ", -1)
-		// }
 	}
 	nextPage := "http://www.zhihu.com" + zhihudata.Paging.Next
 	return resItems, nextPage, nil

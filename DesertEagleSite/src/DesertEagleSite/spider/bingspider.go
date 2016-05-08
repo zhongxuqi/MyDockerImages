@@ -26,10 +26,12 @@ func ParseBingHTML(resp *goquery.Document) ([]DataItem, string, error) {
   resp.Find("#b_results li.b_algo, #b_results li.b_ans").Each(func(i int, s *goquery.Selection) {
     resItem := DataItem{}
 		if len(s.Find("h2 a").Nodes) > 0 {
-	    resItem.Title = s.Find("h2 a").First().Text()
+	    resItem.Title = strings.Replace(strings.Trim(
+				s.Find("h2 a").First().Text(), " \n"), "\n", " ", -1)
 	    resItem.Link = s.Find("h2 a").First().AttrOr("href", "")
 		} else if len(s.Find("h5 a").Nodes) > 0 {
-			resItem.Title = s.Find("h5 a").First().Text()
+			resItem.Title = strings.Replace(strings.Trim(
+				s.Find("h5 a").First().Text(), " \n"), "\n", " ", -1)
 	    resItem.Link = s.Find("h5 a").First().AttrOr("href", "")
 		} else {
 			return
