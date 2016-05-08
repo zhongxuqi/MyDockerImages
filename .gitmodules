@@ -1,9 +1,3 @@
-[submodule "golang/myimage/src/github.com/opesun/goquery"]
-	path = golang/myimage/src/github.com/opesun/goquery
-	url = https://github.com/crufter/goquery.git
-[submodule "DesertEagleSite/src/github.com/opesun/goquery"]
-	path = DesertEagleSite/src/github.com/opesun/goquery
-	url = https://github.com/crufter/goquery.git
 [submodule "DesertEagleSite/src/qiniupkg.com/api.v7"]
 	path = DesertEagleSite/src/qiniupkg.com/api.v7
 	url = https://github.com/qiniu/api.v7.git
