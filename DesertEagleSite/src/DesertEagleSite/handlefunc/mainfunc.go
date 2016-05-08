@@ -1,0 +1,84 @@
+package handlefunc
+
+import (
+	"os"
+	"time"
+	"sync"
+	"strconv"
+	"net/http"
+	"fmt"
+	"html/template"
+	"strings"
+)
+
+type BaseResponse struct {
+	Status string `json:"status"`
+	Message string `json:"message"`
+}
+
+var iconHandler http.Handler = http.FileServer(http.Dir("html/image"))
+var urlFuncMap map[string] func(w http.ResponseWriter, r *http.Request)
+func init() {
+	urlFuncMap = make(map[string] func(w http.ResponseWriter, r *http.Request))
+
+	initSpider()
+	initFile();
+	initQiniu();
+}
+
+func parseKeyword(r *http.Request, keyname string) (string, bool) {
+	for _, item := range strings.Split(r.URL.RawQuery, "&") {
+		if item[0:strings.Index(item, "=")] == keyname {
+			return item[strings.Index(item, "=")+1:], true
+		}
+	}
+	return "", false
+}
+
+var mux sync.Mutex
+
+func writeLog(r *http.Request) {
+	mux.Lock()
+	defer mux.Unlock()
+	t := time.Now()
+	year, month, day := t.Date()
+	filename := strconv.Itoa(year) + "-" + strconv.Itoa(int(month)) + "-"+ strconv.Itoa(day) + ".log"
+	file, err := os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+	file.Write([]byte(t.Format(time.UnixDate)+"  "))
+	file.Write([]byte(r.Method + "  " + r.RemoteAddr + "  " + r.URL.Path + "  " + r.URL.RawQuery + "\n"))
+}
+
+func HandleMain(w http.ResponseWriter, r *http.Request) {
+	writeLog(r)
+
+	// go to file server
+	if r.URL.Path == "/" {
+		t, err := template.ParseFiles("html/index.html")
+		if err != nil {
+			fmt.Println(err)
+		}
+		t.Execute(w, nil)
+		return
+	}
+	if r.URL.Path == "/favicon.ico" {
+		iconHandler.ServeHTTP(w, r);
+	}
+	if (r.URL.Path[0:5] == "/html") || (r.URL.Path[0:5] == "/data") {
+		handleFileServer(w, r);
+		return;
+	}
+
+	// go json server
+	if strings.LastIndex(r.URL.Path, "/") <= 0 {
+		return
+	}
+	url := r.URL.Path[1:]
+	if mhandleFunc, ok := urlFuncMap[url]; ok {
+		mhandleFunc(w, r)
+		return
+	}
+}
