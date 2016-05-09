@@ -13,6 +13,3 @@
 [submodule "DesertEagleSite/src/github.com/andybalholm/cascadia"]
 	path = DesertEagleSite/src/github.com/andybalholm/cascadia
 	url = https://github.com/andybalholm/cascadia.git
-[submodule "DesertEagleSite/src/DesertEagleSite"]
-	path = DesertEagleSite/src/DesertEagleSite
-	url = https://git.coding.net/musketeer/DesertEagleSite.git
