@@ -37,6 +37,9 @@ func ParseBaiduHTML(resp *goquery.Document) ([]DataItem, string, error) {
 		} else if len(s.Find(".c-row div p").Nodes) > 0 {
 			resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find(".c-row div p").Text(), " \n"), "\n", " ", -1)
+		} else if len(s.Find(".op-tieba-general-firsttd").Nodes) > 0 {
+			resItem.Abstract = strings.Replace(strings.Trim(
+				s.Find(".op-tieba-general-firsttd").Text(), " \n"), "\n", " ", -1)
 		}
     resItem.Image = s.Find("img").AttrOr("src", "")
     resItems = append(resItems, resItem)
