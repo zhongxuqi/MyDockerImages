@@ -16,3 +16,6 @@
 [submodule "DesertEagleSite/src/DesertEagleSite"]
 	path = DesertEagleSite/src/DesertEagleSite
 	url = https://git.coding.net/musketeer/DesertEagleSite.git
+[submodule "DesertEagleSite/src/golang.org/x/text"]
+	path = DesertEagleSite/src/golang.org/x/text
+	url = https://github.com/golang/text.git

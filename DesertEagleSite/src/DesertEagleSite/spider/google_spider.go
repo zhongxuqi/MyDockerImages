@@ -2,15 +2,25 @@ package spider
 
 import (
   "strings"
+  "net/http"
   "github.com/PuerkitoBio/goquery"
+  "DesertEagleSite/util"
 )
 
 func GetGoogleData(keyword string) ([]DataItem, string, error) {
-	resp, err := goquery.NewDocument("http://i.xsou.co/search?q=" + keyword)
+  resp, err := http.Get("http://i.xsou.co/search?q=" + keyword)
 	if err != nil {
 		return nil, "", err
 	}
-	return ParseGoogleHTML(resp)
+  b, err := util.DecodeResponse2Utf8Bytes(resp)
+  if err != nil {
+		return nil, "", err
+	}
+  doc, err := goquery.NewDocumentFromReader(util.ConvBytes2Reader(b))
+  if err != nil {
+		return nil, "", err
+	}
+	return ParseGoogleHTML(doc)
 }
 
 func ParseGoogleUrl(url string) ([]DataItem, string, error) {
