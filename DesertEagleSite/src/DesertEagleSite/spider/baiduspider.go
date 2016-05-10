@@ -23,11 +23,14 @@ func ParseBaiduUrl(url string) ([]DataItem, string, error) {
 
 func ParseBaiduHTML(resp *goquery.Document) ([]DataItem, string, error) {
 	resItems := make([]DataItem, 0)
-  resp.Find(".c-container").Each(func(i int, s *goquery.Selection) {
+  resp.Find(".result, .result-op").Each(func(i int, s *goquery.Selection) {
     resItem := DataItem{}
     resItem.Title = strings.Replace(strings.Trim(
-			s.Find("h3 a").First().Text(), " \n"), "\n", " ", -1)
+			s.Find("h3").Text(), " \n"), "\n", " ", -1)
     resItem.Link = s.Find("h3 a").First().AttrOr("href", "")
+		if len(resItem.Link) == 0 {
+			return
+		}
 		if len(s.Find(".c-abstract").Nodes) > 0 {
     	resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find(".c-abstract").Text(), " \n"), "\n", " ", -1)

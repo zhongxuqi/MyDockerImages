@@ -23,11 +23,20 @@ func ParseCSDNUrl(url string) ([]DataItem, string, error) {
 
 func ParseCSDNHTML(resp *goquery.Document) ([]DataItem, string, error) {
 	resItems := make([]DataItem, 0)
-  resp.Find("dl.search-list").Each(func(i int, s *goquery.Selection) {
+  resp.Find(".add-tag-con, .search-list-con dl.search-list").
+	Each(func(i int, s *goquery.Selection) {
     resItem := DataItem{}
-    resItem.Title = strings.Replace(strings.Trim(
-			s.Find("dt a").First().Text(), " \n"), "\n", " ", -1)
-    resItem.Link = s.Find("dt a").First().AttrOr("href", "")
+		if len(s.Find("h3 a").Nodes) > 0 {
+			resItem.Title = strings.Replace(strings.Trim(
+				s.Find("h3 a").First().Text(), " \n"), "\n", " ", -1)
+	    resItem.Link = s.Find("h3 a").First().AttrOr("href", "")
+		} else if len(s.Find("dt a").Nodes) > 0 {
+	    resItem.Title = strings.Replace(strings.Trim(
+				s.Find("dt a").First().Text(), " \n"), "\n", " ", -1)
+	    resItem.Link = s.Find("dt a").First().AttrOr("href", "")
+		} else {
+			return
+		}
 		if len(s.Find("dd.search-detail").Nodes) > 0 {
     	resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find("dd.search-detail").Text(), " \n"), "\n", " ", -1)

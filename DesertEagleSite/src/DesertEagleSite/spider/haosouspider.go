@@ -25,12 +25,26 @@ func ParseHaosouHTML(resp *goquery.Document) ([]DataItem, string, error) {
 	resItems := make([]DataItem, 0)
   resp.Find("li.res-list").Each(func(i int, s *goquery.Selection) {
     resItem := DataItem{}
-    resItem.Title = strings.Replace(strings.Trim(
-			s.Find("h3.res-title a").First().Text(), " \n"), "\n", " ", -1)
-    resItem.Link = s.Find("h3.res-title a").First().AttrOr("href", "")
+		if len(s.Find("h3.res-title a").Nodes) > 0 {
+	    resItem.Title = strings.Replace(strings.Trim(
+				s.Find("h3.res-title a").First().Text(), " \n"), "\n", " ", -1)
+	    resItem.Link = s.Find("h3.res-title a").First().AttrOr("href", "")
+		} else if len(s.Find("h3.title a").Nodes) > 0 {
+	    resItem.Title = strings.Replace(strings.Trim(
+				s.Find("h3.title a").First().Text(), " \n"), "\n", " ", -1)
+	    resItem.Link = s.Find("h3.title a").First().AttrOr("href", "")
+		} else {
+			return
+		}
 		if len(s.Find("p.res-desc").Nodes) > 0 {
     	resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find("p.res-desc").Text(), " \n"), "\n", " ", -1)
+		} else if len(s.Find(".res-rich p").Nodes) > 0 {
+    	resItem.Abstract = strings.Replace(strings.Trim(
+				s.Find(".res-rich p").Text(), " \n"), "\n", " ", -1)
+		} else if len(s.Find(".mh-wrap").Nodes) > 0 {
+    	resItem.Abstract = strings.Replace(strings.Trim(
+				s.Find(".mh-wrap").Text(), " \n"), "\n", " ", -1)
 		}
     resItem.Image = s.Find("img").AttrOr("src", "")
     resItems = append(resItems, resItem)

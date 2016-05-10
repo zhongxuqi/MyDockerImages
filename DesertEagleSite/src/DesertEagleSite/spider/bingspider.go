@@ -45,6 +45,12 @@ func ParseBingHTML(resp *goquery.Document) ([]DataItem, string, error) {
 		} else if len(s.Find(".b_overflow p").Nodes) > 0 {
 			resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find(".b_overflow p").Text(), " \n"), "\n", " ", -1)
+		} else if len(s.Find("p.b_snippet").Nodes) > 0 {
+			resItem.Abstract = strings.Replace(strings.Trim(
+				s.Find("p.b_snippet").Text(), " \n"), "\n", " ", -1)
+		} else if len(s.Find(".bm_ctn").Nodes) > 0 {
+			resItem.Abstract = strings.Replace(strings.Trim(
+				s.Find(".bm_ctn").Text(), " \n"), "\n", " ", -1)
 		}
     resItem.Image = s.Find("img").AttrOr("src", "")
     resItems = append(resItems, resItem)
