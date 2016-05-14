@@ -43,6 +43,7 @@ func ParseSougouHTML(resp *goquery.Document) ([]DataItem, string, error) {
     } else {
 			return
 		}
+    resItem.Title, _ = url.QueryUnescape(resItem.Title)
     resItem.Link = GetSougouRealUrl(resItem.Link)
 		if len(s.Find(".str_info").Nodes) > 0 {
     	resItem.Abstract = strings.Replace(strings.Trim(
@@ -76,6 +77,7 @@ func ParseSougouHTML(resp *goquery.Document) ([]DataItem, string, error) {
       resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find(".wx-box-new").Text(), " \n"), "\n", " ", -1)
     }
+    resItem.Abstract, _ = url.QueryUnescape(resItem.Abstract)
     resItem.ImageUrl = s.Find("img").AttrOr("src", "")
     resItems = append(resItems, resItem)
   })
