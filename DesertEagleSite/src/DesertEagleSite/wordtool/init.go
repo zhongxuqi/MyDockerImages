@@ -14,7 +14,7 @@ type WordObject struct {
 }
 
 var (
-  csvfilename = "../data/CorpusWordPOSlist.csv"
+  csvfilename = "data/CorpusWordPOSlist.csv"
   wordDict = make(map[string] *WordObject)
 )
 

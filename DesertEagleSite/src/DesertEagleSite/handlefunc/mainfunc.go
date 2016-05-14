@@ -9,12 +9,9 @@ import (
 	"fmt"
 	"html/template"
 	"strings"
+	"encoding/json"
+	. "DesertEagleSite/bean"
 )
-
-type BaseResponse struct {
-	Status string `json:"status"`
-	Message string `json:"message"`
-}
 
 var iconHandler http.Handler = http.FileServer(http.Dir("html/image"))
 var urlFuncMap map[string] func(w http.ResponseWriter, r *http.Request)
@@ -50,6 +47,19 @@ func writeLog(r *http.Request) {
 	defer file.Close()
 	file.Write([]byte(t.Format(time.UnixDate)+"  "))
 	file.Write([]byte(r.Method + "  " + r.RemoteAddr + "  " + r.URL.Path + "  " + r.URL.RawQuery + "\n"))
+}
+
+func writeResult(w http.ResponseWriter, r *http.Request, msg string, err error) {
+	var response BaseResponse
+	if err != nil {
+		response.Status = "500"
+		response.Message = err.Error()
+	} else {
+		response.Status = "200"
+		response.Message = msg
+	}
+	respBytes, _ := json.Marshal(response)
+	w.Write(respBytes)
 }
 
 func HandleMain(w http.ResponseWriter, r *http.Request) {

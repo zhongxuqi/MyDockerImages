@@ -2,11 +2,13 @@ package spider
 
 import (
 	"strings"
+	"net/url"
   "github.com/PuerkitoBio/goquery"
+	. "DesertEagleSite/bean"
 )
 
 func GetBingData(keyword string) ([]DataItem, string, error) {
-	resp, err := goquery.NewDocument("http://cn.bing.com/search?q=" + keyword)
+	resp, err := goquery.NewDocument("http://cn.bing.com/search?q=" + url.QueryEscape(keyword))
 	if err != nil {
 		return nil, "", err
 	}
@@ -52,7 +54,7 @@ func ParseBingHTML(resp *goquery.Document) ([]DataItem, string, error) {
 			resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find(".bm_ctn").Text(), " \n"), "\n", " ", -1)
 		}
-    resItem.Image = s.Find("img").AttrOr("src", "")
+    resItem.ImageUrl = s.Find("img").AttrOr("src", "")
     resItems = append(resItems, resItem)
   })
 	nextPage := ""

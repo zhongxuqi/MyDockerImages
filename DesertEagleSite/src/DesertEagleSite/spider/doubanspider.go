@@ -3,6 +3,7 @@ package spider
 import (
 	"strings"
   "github.com/PuerkitoBio/goquery"
+	. "DesertEagleSite/bean"
 )
 
 func GetDoubanData(keyword string) ([]DataItem, string, error) {
@@ -24,7 +25,7 @@ func GetDoubanData(keyword string) ([]DataItem, string, error) {
 			resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find(".c-row div p").Text(), " \n"), "\n", " ", -1)
 		}
-    resItem.Image = s.Find("img").AttrOr("src", "")
+    resItem.ImageUrl = s.Find("img").AttrOr("src", "")
     resItems = append(resItems, resItem)
   })
 	nextPage := ""

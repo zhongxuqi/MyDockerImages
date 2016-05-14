@@ -3,6 +3,7 @@ package spider
 import (
 	"strings"
   "github.com/PuerkitoBio/goquery"
+	. "DesertEagleSite/bean"
 )
 
 func GetJianshuData(keyword string) ([]DataItem, string, error) {
@@ -32,7 +33,7 @@ func ParseJianShuHTML(resp *goquery.Document) ([]DataItem, string, error) {
     	resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find("p").Text(), " \n"), "\n", " ", -1)
 		}
-    resItem.Image = s.Find("img").AttrOr("src", "")
+    resItem.ImageUrl = s.Find("img").AttrOr("src", "")
     resItems = append(resItems, resItem)
   })
 	nextPage := ""

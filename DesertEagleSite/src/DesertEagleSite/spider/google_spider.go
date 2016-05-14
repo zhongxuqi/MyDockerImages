@@ -5,6 +5,7 @@ import (
   "net/http"
   "github.com/PuerkitoBio/goquery"
   "DesertEagleSite/util"
+  . "DesertEagleSite/bean"
 )
 
 func GetGoogleData(keyword string) ([]DataItem, string, error) {
@@ -49,7 +50,7 @@ func ParseGoogleHTML(resp *goquery.Document) ([]DataItem, string, error) {
       return
     }
     resItem.Abstract = s.Find(".s .st").Text()
-    resItem.Image = s.Find("img").AttrOr("src", "")
+    resItem.ImageUrl = s.Find("img").AttrOr("src", "")
     resItems = append(resItems, resItem)
   })
 	nextPage := ""

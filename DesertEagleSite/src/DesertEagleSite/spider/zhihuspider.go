@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
   "github.com/PuerkitoBio/goquery"
+	. "DesertEagleSite/bean"
 )
 
 type Page struct {
@@ -60,7 +61,7 @@ func ParseZhihuHTML(resp *http.Response) ([]DataItem, string, error) {
     	resItem.Abstract = strings.Replace(strings.Trim(
 				doc.Find(".summary").Text(), " \n"), "\n", " ", -1)
 		}
-    resItem.Image = doc.Find("img").AttrOr("src", "")
+    resItem.ImageUrl = doc.Find("img").AttrOr("src", "")
     resItems = append(resItems, resItem)
 	}
 	nextPage := "http://www.zhihu.com" + zhihudata.Paging.Next

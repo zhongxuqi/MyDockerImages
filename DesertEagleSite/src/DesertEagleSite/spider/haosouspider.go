@@ -1,8 +1,10 @@
 package spider
 
 import (
+  "regexp"
 	"strings"
   "github.com/PuerkitoBio/goquery"
+	. "DesertEagleSite/bean"
 )
 
 func GetHaosouData(keyword string) ([]DataItem, string, error) {
@@ -36,6 +38,7 @@ func ParseHaosouHTML(resp *goquery.Document) ([]DataItem, string, error) {
 		} else {
 			return
 		}
+		resItem.Link = GetHaosouRealUrl(resItem.Link)
 		if len(s.Find("p.res-desc").Nodes) > 0 {
     	resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find("p.res-desc").Text(), " \n"), "\n", " ", -1)
@@ -46,7 +49,7 @@ func ParseHaosouHTML(resp *goquery.Document) ([]DataItem, string, error) {
     	resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find(".mh-wrap").Text(), " \n"), "\n", " ", -1)
 		}
-    resItem.Image = s.Find("img").AttrOr("src", "")
+    resItem.ImageUrl = s.Find("img").AttrOr("src", "")
     resItems = append(resItems, resItem)
   })
 	nextPage := ""
@@ -55,4 +58,21 @@ func ParseHaosouHTML(resp *goquery.Document) ([]DataItem, string, error) {
     nextPage = "https://www.so.com" + nextHtml.Last().AttrOr("href", "")
 	}
 	return resItems, nextPage, nil
+}
+
+func GetHaosouRealUrl(in_url string) (string) {
+	if strings.Index(in_url, "www.so.com/link?url=") < 0 {
+		return in_url
+	}
+	resp, err := goquery.NewDocument(in_url)
+	if err != nil {
+		return in_url
+	}
+	re := regexp.MustCompile("http://[^'\" ]+")
+  url := re.FindString(resp.Find("noscript").Text())
+	if len(url) > 0 {
+		return url
+	} else {
+		return in_url
+	}
 }

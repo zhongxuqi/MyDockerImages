@@ -19,3 +19,9 @@
 [submodule "DesertEagleSite/src/golang.org/x/text"]
 	path = DesertEagleSite/src/golang.org/x/text
 	url = https://github.com/golang/text.git
+[submodule "DesertEagleSite/src/github.com/saintfish/chardet"]
+	path = DesertEagleSite/src/github.com/saintfish/chardet
+	url = https://github.com/saintfish/chardet.git
+[submodule "DesertEagleSite/src/github.com/ylywyn/jpush-api-go-client"]
+	path = DesertEagleSite/src/github.com/ylywyn/jpush-api-go-client
+	url = https://github.com/ylywyn/jpush-api-go-client.git

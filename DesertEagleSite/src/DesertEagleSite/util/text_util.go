@@ -4,11 +4,15 @@ import (
   "os"
   "fmt"
   "bytes"
+  "time"
+  "strconv"
   "io/ioutil"
   "unicode/utf8"
   "net/http"
+  "encoding/json"
   "golang.org/x/text/encoding/simplifiedchinese"
   "golang.org/x/text/transform"
+  "github.com/saintfish/chardet"
 )
 
 func DecodeUtf8String(encodedString string) (decodedString string) {
@@ -35,10 +39,14 @@ func Write2File(filename string, data []byte) {
   f.Write(data)
 }
 
-func WriteResp2File(filename string, resp *http.Response) {
+func GetResp2Bytes(resp *http.Response) ([]byte) {
   buf := bytes.NewBuffer([]byte(""))
   resp.Write(buf)
-  Write2File(filename, buf.Bytes())
+  return buf.Bytes()
+}
+
+func WriteResp2File(filename string, resp *http.Response) {
+  Write2File(filename, GetResp2Bytes(resp))
 }
 
 func GbkToUtf8(s []byte) ([]byte, error) {
@@ -53,8 +61,12 @@ func GbkToUtf8(s []byte) ([]byte, error) {
 func DecodeResponse2Utf8Bytes(resp *http.Response) ([]byte, error) {
   buf := bytes.NewBuffer([]byte(""))
 	resp.Write(buf)
-  reader := transform.NewReader(bytes.NewReader(buf.Bytes()),
-		simplifiedchinese.GBK.NewDecoder())
+  decoder := simplifiedchinese.GBK.NewDecoder()
+  result, _ := chardet.NewHtmlDetector().DetectBest(buf.Bytes())
+  if result.Charset == "GB-18030" {
+    decoder = simplifiedchinese.GBK.NewDecoder()
+  }
+  reader := transform.NewReader(bytes.NewReader(buf.Bytes()), decoder)
   b, err := ioutil.ReadAll(reader)
   if err != nil {
 			return []byte{}, err
@@ -64,4 +76,15 @@ func DecodeResponse2Utf8Bytes(resp *http.Response) ([]byte, error) {
 
 func ConvBytes2Reader(data []byte) (*bytes.Reader) {
   return  bytes.NewReader(data)
+}
+
+func GetFormatTimeNow() string {
+  t := time.Now()
+  return strconv.Itoa(t.Year()) + "-" + t.Month().String() + "-" + strconv.Itoa(t.Day()) +
+    "-" + strconv.Itoa(t.Hour()) + "-" + strconv.Itoa(t.Second())
+}
+
+func ConvObject2Json(o interface{}) string {
+  respBytes, _ := json.Marshal(o)
+  return string(respBytes)
 }

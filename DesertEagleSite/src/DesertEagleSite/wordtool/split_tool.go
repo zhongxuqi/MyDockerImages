@@ -6,10 +6,12 @@ import (
 )
 
 var (
-  WordBlock = ""
+  WordBlock = "[\u4e00-\u9fa5a-zA-Z0-9]+"
   ChineseBlock = "[\u4e00-\u9fa5]+"
   RawSubItem = []string{"[^\u4e00-\u9fa5a-zA-Z0-9]+", "[\u4e00-\u9fa5]+", "[a-zA-Z0-9]+"}
-  ForceBlock = []string{"《.*?》", "\".*?\"", "“.*?”", "<.*?>", "'.*?'"}
+  ForceBlock = []string{"《.*?》", "\".*?\"", "“.*?”", "'.*?'"}
+  BANSIGN = []string{",", ".", "，", "。", "+", " ", "\n"}
+  SECTION_END = []string{",", ".", ";", "。", "，"}
 )
 
 func SplitBlock(block string) (wordList []string) {
@@ -98,6 +100,24 @@ func SplitSentence(sentence string) (wordList []string) {
     for _, word := range SplitBlock(sentence[lastEnd:]) {
       wordList = append(wordList, word)
     }
+  }
+  return
+}
+
+func SplitContent2Words(keywords string) (wordList []string) {
+  re := regexp.MustCompile("[^" + strings.Join(BANSIGN, "") + "]+")
+  for _, block := range re.FindAllString(keywords, -1) {
+    for _, word := range SplitSentence(block) {
+      wordList = append(wordList, word)
+    }
+  }
+  return
+}
+
+func SplitArticle2Sentence(article string) (sentenceList []string) {
+  re := regexp.MustCompile("[^" + strings.Join(SECTION_END, "") + "]+")
+  for _, sentence := range re.FindAllString(article, -1) {
+    sentenceList = append(sentenceList, sentence)
   }
   return
 }

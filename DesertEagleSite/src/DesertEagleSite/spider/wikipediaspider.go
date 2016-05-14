@@ -3,6 +3,7 @@ package spider
 import (
 	"strings"
   "github.com/PuerkitoBio/goquery"
+	. "DesertEagleSite/bean"
 )
 
 func GetWikipediaData(keyword string) ([]DataItem, string, error) {
@@ -33,7 +34,7 @@ func ParseWikipediaHTML(resp *goquery.Document) ([]DataItem, string, error) {
     	resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find("div.searchresult").Text(), " \n"), "\n", " ", -1)
 		}
-    resItem.Image = s.Find("img").AttrOr("src", "")
+    resItem.ImageUrl = s.Find("img").AttrOr("src", "")
     resItems = append(resItems, resItem)
   })
 	nextPage := ""
