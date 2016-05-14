@@ -38,6 +38,9 @@ func ParseBingHTML(resp *goquery.Document) ([]DataItem, string, error) {
 		} else {
 			return
 		}
+		if tmp, err := url.QueryUnescape(resItem.Title); err == nil {
+			resItem.Title = tmp
+		}
 		if len(s.Find(".b_rich p").Nodes) > 0 {
     	resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find(".b_rich p").Text(), " \n"), "\n", " ", -1)
@@ -53,6 +56,9 @@ func ParseBingHTML(resp *goquery.Document) ([]DataItem, string, error) {
 		} else if len(s.Find(".bm_ctn").Nodes) > 0 {
 			resItem.Abstract = strings.Replace(strings.Trim(
 				s.Find(".bm_ctn").Text(), " \n"), "\n", " ", -1)
+		}
+		if tmp, err := url.QueryUnescape(resItem.Abstract); err == nil {
+			resItem.Abstract = tmp
 		}
     resItem.ImageUrl = s.Find("img").AttrOr("src", "")
     resItems = append(resItems, resItem)

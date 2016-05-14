@@ -56,11 +56,17 @@ func ParseZhihuHTML(resp *http.Response) ([]DataItem, string, error) {
 		resItem := DataItem{}
     resItem.Title = strings.Replace(strings.Trim(
 			doc.Find("div.title a").First().Text(), " \n"), "\n", " ", -1)
+		if tmp, err := url.QueryUnescape(resItem.Title); err == nil {
+			resItem.Title = tmp
+		}
     resItem.Link = "http://www.zhihu.com" +
 			doc.Find("div.title a").First().AttrOr("href", "")
 		if len(doc.Find(".summary").Nodes) > 0 {
     	resItem.Abstract = strings.Replace(strings.Trim(
 				doc.Find(".summary").Text(), " \n"), "\n", " ", -1)
+		}
+		if tmp, err := url.QueryUnescape(resItem.Abstract); err == nil {
+			resItem.Abstract = tmp
 		}
     resItem.ImageUrl = doc.Find("img").AttrOr("src", "")
     resItems = append(resItems, resItem)
