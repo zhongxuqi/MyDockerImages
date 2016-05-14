@@ -47,7 +47,7 @@ func submitTask(taskQueue chan<- *UrlTask, UrlList []DataItem, keywords []string
 func GetUnionData(keyword, parser_names, registration_id string, spiderList []SpiderObject) {
   UrlList := make([]DataItem, 0)
   for _, spider := range spiderList {
-    fmt.Println("search in: ", spider.Name)
+    oldSize := len(UrlList)
     itemList, nextPage, err := spider.GetDataFunc(keyword)
     if err == nil && itemList != nil {
       for _, item := range itemList {
@@ -62,6 +62,7 @@ func GetUnionData(keyword, parser_names, registration_id string, spiderList []Sp
         UrlList = append(UrlList, item)
       }
     }
+    fmt.Println("search in: ", spider.Name, ", size: ", len(UrlList) - oldSize)
   }
   taskQueue := make(chan *UrlTask, 64)
   resultQueue := make(chan *UrlResult, 64)

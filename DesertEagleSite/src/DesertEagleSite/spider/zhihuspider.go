@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"encoding/json"
 	"io/ioutil"
+	"net/url"
   "github.com/PuerkitoBio/goquery"
 	. "DesertEagleSite/bean"
 )
@@ -20,7 +21,7 @@ type ZhiHuData struct {
 }
 
 func GetZhihuData(keyword string) ([]DataItem, string, error) {
-	resp, err := http.Get("http://www.zhihu.com/r/search?range=&type=question&offset=0&q=" + keyword)
+	resp, err := http.Get("http://www.zhihu.com/r/search?range=&type=question&offset=0&q=" + url.QueryEscape(keyword))
 	if err != nil {
 		return nil, "", err
 	}
