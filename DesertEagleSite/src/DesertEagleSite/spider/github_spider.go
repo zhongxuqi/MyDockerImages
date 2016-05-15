@@ -1,14 +1,13 @@
 package spider
 
 import (
-	"net/url"
 	"strings"
   "github.com/PuerkitoBio/goquery"
 	. "DesertEagleSite/bean"
 )
 
 func GetGithubData(keyword string) ([]DataItem, string, error) {
-  resp, err := goquery.NewDocument("https://github.com/search?q=" + url.QueryEscape(keyword))
+  resp, err := goquery.NewDocument("https://github.com/search?q=" + keyword)
 	if err != nil {
 		return nil, "", err
 	}

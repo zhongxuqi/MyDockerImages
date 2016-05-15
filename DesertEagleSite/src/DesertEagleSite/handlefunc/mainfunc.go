@@ -6,6 +6,7 @@ import (
 	"sync"
 	"strconv"
 	"net/http"
+	"net/url"
 	"fmt"
 	"html/template"
 	"strings"
@@ -24,12 +25,16 @@ func init() {
 }
 
 func parseKeyword(r *http.Request, keyname string) (string, bool) {
-	for _, item := range strings.Split(r.URL.RawQuery, "&") {
-		if item[0:strings.Index(item, "=")] == keyname {
-			return item[strings.Index(item, "=")+1:], true
-		}
+	paramsMap, err := url.ParseQuery(r.URL.RawQuery)
+	if err != nil {
+		return "", false
 	}
-	return "", false
+	keyword := paramsMap.Get(keyname)
+	if len(keyword) > 0 {
+		return keyword, true
+	} else {
+		return "", false
+	}
 }
 
 var mux sync.Mutex

@@ -25,6 +25,7 @@ func initSpider() {
   }
 	urlFuncMap["app/submit_union_task"] = SearchUnion
 	urlFuncMap["app/get_union_result"] = GetUnionResult
+	urlFuncMap["app/submit_monitor_task"] = SubmitMonitorTask
 	urlFuncMap["app/custom_search"] = CustomSearch
 }
 
@@ -110,6 +111,28 @@ func GetUnionResult(w http.ResponseWriter, r *http.Request) {
 	}
 	respBytes, _ := json.Marshal(spider.GetResultByKey(mapkey))
 	w.Write(respBytes)
+}
+
+func SubmitMonitorTask(w http.ResponseWriter, r *http.Request) {
+	paramsMap, err := url.ParseQuery(r.URL.RawQuery)
+	if err != nil {
+		writeResult(w, r, "", err)
+		return
+	}
+	keyword := paramsMap.Get("keyword");
+	registration_id := paramsMap.Get("registration_id");
+	target_url := paramsMap.Get("target_url");
+	if len(keyword) == 0 || len(registration_id) == 0 || len(target_url) == 0 {
+		writeResult(w, r, "", errors.New("argument is error"))
+		return
+	}
+	decode_url, err := base64.URLEncoding.DecodeString(target_url)
+	if err != nil {
+		writeResult(w, r, "", err)
+		return
+	}
+	go spider.SubmitRawMonitorTask(keyword, registration_id, string(decode_url))
+	writeResult(w, r, "task has submitted.", nil)
 }
 
 func CustomSearch(w http.ResponseWriter, r *http.Request) {

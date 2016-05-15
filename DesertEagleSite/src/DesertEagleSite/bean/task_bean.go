@@ -39,3 +39,27 @@ func (result *UrlResult) ToString() (str string) {
   str += "]"
   return
 }
+
+type MonitorTask struct {
+  Url string
+  Keyword string
+  Keywords []string
+  RegistrationId string
+  RespMapKey string
+}
+
+func (task *MonitorTask) IsEqual(another *MonitorTask) bool {
+  if task.Url == another.Url &&
+  task.Keyword == another.Keyword &&
+  task.RegistrationId == another.RegistrationId {
+    return true
+  } else {
+    return false
+  }
+}
+
+type MonitorResponse struct {
+  BaseResponse
+  Task MonitorTask
+  ResultData []UrlResult
+}

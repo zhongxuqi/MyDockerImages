@@ -32,4 +32,5 @@ type UnionResponse struct {
 type PushMessage struct {
 	MapKey string
 	Keyword string
+	Type int
 }

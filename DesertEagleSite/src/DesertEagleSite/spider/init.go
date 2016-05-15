@@ -19,6 +19,9 @@ const (
 	STACKOVERFLOW = "Stack Overflow"
 	GITHUB = "github"
   SOUGOU = "sougou"
+
+  UNION_TYPE = 1
+  MONITOR_TYPE = 2
 )
 
 var SpiderMap = map[string] SpiderObject{

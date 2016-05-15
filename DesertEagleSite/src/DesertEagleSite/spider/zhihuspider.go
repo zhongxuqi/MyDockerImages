@@ -21,7 +21,7 @@ type ZhiHuData struct {
 }
 
 func GetZhihuData(keyword string) ([]DataItem, string, error) {
-	resp, err := http.Get("http://www.zhihu.com/r/search?range=&type=question&offset=0&q=" + url.QueryEscape(keyword))
+	resp, err := http.Get("http://www.zhihu.com/r/search?range=&type=question&offset=0&q=" + keyword)
 	if err != nil {
 		return nil, "", err
 	}

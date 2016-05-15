@@ -7,7 +7,7 @@ import (
 )
 
 func GetCSDNData(keyword string) ([]DataItem, string, error) {
-	resp, err := goquery.NewDocument("http://so.csdn.net/so/search/s.do?t=blog&o=&s=&q=" + keyword )
+	resp, err := goquery.NewDocument("http://so.csdn.net/so/search/s.do?t=blog&o=&s=&q=" + keyword)
 	if err != nil {
 		return nil, "", err
 	}

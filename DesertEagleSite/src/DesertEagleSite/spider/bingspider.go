@@ -8,7 +8,7 @@ import (
 )
 
 func GetBingData(keyword string) ([]DataItem, string, error) {
-	resp, err := goquery.NewDocument("http://cn.bing.com/search?q=" + url.QueryEscape(keyword))
+	resp, err := goquery.NewDocument("http://cn.bing.com/search?q=" + keyword)
 	if err != nil {
 		return nil, "", err
 	}

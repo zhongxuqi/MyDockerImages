@@ -9,7 +9,7 @@ import (
 )
 
 func GetSougouData(keyword string) ([]DataItem, string, error) {
-	resp, err := goquery.NewDocument("https://www.sogou.com/web?query=" + url.QueryEscape(keyword))
+	resp, err := goquery.NewDocument("https://www.sogou.com/web?query=" + keyword)
 	if err != nil {
 		return nil, "", err
 	}
