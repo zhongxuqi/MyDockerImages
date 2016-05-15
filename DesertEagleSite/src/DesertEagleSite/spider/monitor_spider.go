@@ -24,17 +24,18 @@ func init() {
 func loop() {
   for {
     fmt.Println("go to sleep.")
-    time.Sleep(time.Minute)
+    time.Sleep(5 * time.Minute)
     fmt.Println("go to wake.")
     mutex.Lock()
 
     for i, task := range mTaskList {
+      task.Life--
       fmt.Println("begin: ", task.Url)
       if time.Now().Before(task.Time) {
         continue
       }
       for time.Now().After(task.Time) {
-        task.Time = task.Time.Add(time.Hour)
+        task.Time = task.Time.Add(2 * time.Hour)
       }
       mTaskList[i] = task
 
@@ -105,7 +106,7 @@ func loop() {
       message.Keyword = task.Keyword
       message.Type = MONITOR_TYPE
     	ret := push_manager.PushJPushMessage(task.RegistrationId, util.ConvObject2Json(message))
-      if !ret {
+      if !ret || task.Life <= 0 {
         DeleteMonitorTaskByIndex(i)
       }
     }
@@ -116,6 +117,7 @@ func loop() {
 func SubmitMonitorTask(task *MonitorTask) bool {
   for _, item := range mTaskList {
     if task.IsEqual(item) {
+      item.Life = 25
       return false
     }
   }
@@ -124,6 +126,7 @@ func SubmitMonitorTask(task *MonitorTask) bool {
   mutex.Lock()
   task.Time = time.Now()
   task.Keywords = wordtool.SplitContent2Words(task.Keyword)
+  task.Life = 25
   mTaskList = append(mTaskList, task)
   mutex.Unlock()
   fmt.Println(len(mTaskList))
