@@ -8,7 +8,8 @@ import (
   "DesertEagleSite/evaluator"
 )
 
-func execTask(taskQueue <-chan *UrlTask, resultQueue chan<- *UrlResult) {
+func execTask(taskQueue <-chan *UrlTask, resultQueue chan<- *UrlResult,
+  endSign <-chan int, discard bool) {
 END_LABEL:
   for {
     select {
@@ -18,12 +19,17 @@ END_LABEL:
       if err != nil {
         continue
       }
+      if discard && eval[len(eval) - 1] <= 0 {
+        continue
+      }
       result := &UrlResult {
         Task: *task,
         Eval: eval,
       }
       resultQueue <- result
     case <- time.After(time.Second):
+      break END_LABEL
+    case <- endSign:
       break END_LABEL
     }
   }
@@ -45,12 +51,13 @@ func submitTask(taskQueue chan<- *UrlTask, UrlList []DataItem, keywords []string
   }
 }
 
-func execTasks(UrlList []DataItem, keyword string) ([]*UrlResult) {
+func execTasks(UrlList []DataItem, keyword string, discard bool) ([]*UrlResult) {
   taskQueue := make(chan *UrlTask, 64)
   resultQueue := make(chan *UrlResult, 64)
   ExecNum := 4
+  endSign := make(chan int, ExecNum)
   for i := 0; i < ExecNum; i++ {
-    go execTask(taskQueue, resultQueue)
+    go execTask(taskQueue, resultQueue, endSign, discard)
   }
   keywords := wordtool.SplitContent2Words(keyword)
   go submitTask(taskQueue, UrlList, keywords)
@@ -86,8 +93,13 @@ END_INSERT:
         break MAIN_END_LABEL
       }
     case <- time.After(10 * time.Second):
-      break MAIN_END_LABEL
+      if len(taskQueue) <= 0 {
+        break MAIN_END_LABEL
+      }
     }
+  }
+  for i := 0; i < ExecNum; i++ {
+    endSign <- 0
   }
   return resultList
 }

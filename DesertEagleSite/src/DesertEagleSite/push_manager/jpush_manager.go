@@ -1,7 +1,7 @@
 package push_manager
 
 import (
-  // "fmt"
+  "fmt"
   "github.com/ylywyn/jpush-api-go-client"
 )
 
@@ -10,7 +10,7 @@ const (
     secret = "7dab3bb63f447b204a92f385"
 )
 
-func PushJPushMessage(registration_id, mapkey string) {
+func PushJPushMessage(registration_id, mapkey string) bool {
 
   //Platform
   var pf jpushclient.Platform
@@ -33,11 +33,12 @@ func PushJPushMessage(registration_id, mapkey string) {
   //push
   b, _ := payload.ToBytes()
   c := jpushclient.NewPushClient(secret, appKey)
-  c.Send(b)
-  // str, err := c.Send(b)
-  // if err != nil {
-  //   fmt.Printf("err:%s\n", err.Error())
-  // } else {
-  //   fmt.Printf("ok:%s\n", str)
-  // }
+  str, err := c.Send(b)
+  if err != nil {
+    fmt.Printf("err:%s\n", err.Error())
+    return false
+  } else {
+    fmt.Printf("ok:%s\n", str)
+    return true
+  }
 }

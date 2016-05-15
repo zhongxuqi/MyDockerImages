@@ -4,6 +4,7 @@ import (
   "fmt"
   "time"
   "sync"
+  "strings"
   . "DesertEagleSite/bean"
   "DesertEagleSite/util"
   "DesertEagleSite/wordtool"
@@ -22,13 +23,25 @@ func init() {
 
 func loop() {
   for {
-    time.Sleep(30 * time.Second)
+    fmt.Println("go to sleep.")
+    time.Sleep(time.Minute)
+    fmt.Println("go to wake.")
+    mutex.Lock()
 
-    for _, task := range mTaskList {
+    for i, task := range mTaskList {
+      fmt.Println("begin: ", task.Url)
+      if time.Now().Before(task.Time) {
+        continue
+      }
+      for time.Now().After(task.Time) {
+        task.Time = task.Time.Add(time.Hour)
+      }
+      mTaskList[i] = task
 
       // get response struct
       resp, ok := mMonitorResultMap[task.RespMapKey]
       if !ok {
+        DeleteMonitorTaskByIndex(i)
         continue
       }
       resp.ResultData = make([]UrlResult, 0)
@@ -41,6 +54,10 @@ func loop() {
       subtask.Task.Info.Link = task.Url
       doc, err := goquery.NewDocument(subtask.Task.Url)
     	if err != nil {
+        fmt.Println(err.Error())
+        mutex.Unlock()
+        DeleteMonitorTask(task)
+        mutex.Lock()
     		continue
     	}
       subtask.Eval = evaluator.EvaluateContentByKeyWords(doc.Find("body").Text(), subtask.Task.Keywords)
@@ -50,8 +67,10 @@ func loop() {
       UrlList := make([]DataItem, 0)
       doc.Find("a").Each(func(i int, s *goquery.Selection) {
         subtask := DataItem{}
-        subtask.Title = s.Text()
-        subtask.Link = s.First().AttrOr("href", "")
+        subtask.Title = strings.Replace(strings.Trim(
+    			s.Text(), " \n"), "\n", " ", -1)
+        subtask.Link = strings.Replace(strings.Trim(
+    			s.First().AttrOr("href", ""), " \n"), "\n", " ", -1)
         if len(subtask.Link) == 0 {
           return
         }
@@ -60,7 +79,8 @@ func loop() {
       fmt.Println(subtask.Task.Info.Title, " size: ", len(UrlList))
 
       // get result list
-      resultList := execTasks(UrlList, task.Keyword)
+      resultList := execTasks(UrlList, task.Keyword, true)
+      fmt.Println("reciver size: ", len(resultList))
 
       // store the response to map
       mapKey := task.RegistrationId + "-" + util.GetFormatTimeNow()
@@ -73,6 +93,10 @@ func loop() {
     	response.Status = "200"
     	response.Message = "search success"
       response.Task = *task
+      response.Title = strings.Replace(strings.Trim(
+  			doc.Find("title").Text(), " \n"), "\n", " ", -1)
+      response.Url = task.Url
+      response.Keyword = task.Keyword
       mMonitorResultMap[mapKey] = response
 
       // notice the client
@@ -80,8 +104,12 @@ func loop() {
     	message.MapKey = mapKey
       message.Keyword = task.Keyword
       message.Type = MONITOR_TYPE
-    	push_manager.PushJPushMessage(task.RegistrationId, util.ConvObject2Json(message))
+    	ret := push_manager.PushJPushMessage(task.RegistrationId, util.ConvObject2Json(message))
+      if !ret {
+        DeleteMonitorTaskByIndex(i)
+      }
     }
+    mutex.Unlock()
   }
 }
 
@@ -94,9 +122,11 @@ func SubmitMonitorTask(task *MonitorTask) bool {
 
   // add task to list
   mutex.Lock()
+  task.Time = time.Now()
   task.Keywords = wordtool.SplitContent2Words(task.Keyword)
   mTaskList = append(mTaskList, task)
   mutex.Unlock()
+  fmt.Println(len(mTaskList))
 
   // add response to list
   mapKey := task.RegistrationId + "-" + util.GetFormatTimeNow()
@@ -129,4 +159,28 @@ func GetMonitorResultByKey(mapkey string) MonitorResponse {
   	response.Message = "has not the map key"
     return response
   }
+}
+
+func DeleteMonitorTaskByIndex(index int) {
+  tmpList := make([]*MonitorTask, 0)
+  for i, item := range mTaskList {
+    if i == index {
+      continue
+    }
+    tmpList = append(tmpList, item)
+  }
+  mTaskList = tmpList
+}
+
+func DeleteMonitorTask(task *MonitorTask) {
+  mutex.Lock()
+  newList := make([]*MonitorTask, 0)
+  for _, item := range mTaskList {
+    if task.IsEqual(item) {
+      continue
+    }
+    newList = append(newList, item)
+  }
+  mTaskList = newList
+  mutex.Unlock()
 }

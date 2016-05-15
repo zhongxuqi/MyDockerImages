@@ -30,7 +30,7 @@ func GetUnionData(keyword, parser_names, registration_id string, spiderList []Sp
     fmt.Println("search in: ", spider.Name, ", size: ", len(UrlList) - oldSize)
   }
 
-  resultList := execTasks(UrlList, keyword)
+  resultList := execTasks(UrlList, keyword, false)
 
   mapKey := registration_id + "-" + util.GetFormatTimeNow()
   var response UnionResponse

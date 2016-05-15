@@ -3,6 +3,7 @@ package bean
 import (
   "errors"
   "strconv"
+  "time"
 )
 
 type UrlTask struct {
@@ -46,6 +47,7 @@ type MonitorTask struct {
   Keywords []string
   RegistrationId string
   RespMapKey string
+  Time time.Time `json:"-"`
 }
 
 func (task *MonitorTask) IsEqual(another *MonitorTask) bool {
@@ -60,6 +62,9 @@ func (task *MonitorTask) IsEqual(another *MonitorTask) bool {
 
 type MonitorResponse struct {
   BaseResponse
+  Url string
+  Title string
+  Keyword string
   Task MonitorTask
   ResultData []UrlResult
 }

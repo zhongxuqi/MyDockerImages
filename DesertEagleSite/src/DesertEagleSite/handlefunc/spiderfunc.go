@@ -26,6 +26,8 @@ func initSpider() {
 	urlFuncMap["app/submit_union_task"] = SearchUnion
 	urlFuncMap["app/get_union_result"] = GetUnionResult
 	urlFuncMap["app/submit_monitor_task"] = SubmitMonitorTask
+	urlFuncMap["app/get_monitor_result"] = GetMonitorResult
+	urlFuncMap["app/delete_monitor_task"] = DeleteMonitorTask
 	urlFuncMap["app/custom_search"] = CustomSearch
 }
 
@@ -133,6 +135,39 @@ func SubmitMonitorTask(w http.ResponseWriter, r *http.Request) {
 	}
 	go spider.SubmitRawMonitorTask(keyword, registration_id, string(decode_url))
 	writeResult(w, r, "task has submitted.", nil)
+}
+
+func GetMonitorResult(w http.ResponseWriter, r *http.Request) {
+	mapkey, ok := parseKeyword(r, "map_key")
+	if !ok {
+		writeResult(w, r, "", errors.New("argument is error"))
+		return
+	}
+	respBytes, _ := json.Marshal(spider.GetMonitorResultByKey(mapkey))
+	w.Write(respBytes)
+}
+
+func DeleteMonitorTask(w http.ResponseWriter, r *http.Request) {
+	paramsMap, err := url.ParseQuery(r.URL.RawQuery)
+	if err != nil {
+		writeResult(w, r, "", err)
+		return
+	}
+	keyword := paramsMap.Get("keyword");
+	registration_id := paramsMap.Get("registration_id");
+	target_url := paramsMap.Get("target_url");
+	if len(keyword) == 0 || len(registration_id) == 0 || len(target_url) == 0 {
+		writeResult(w, r, "", errors.New("argument is error"))
+		return
+	}
+	decode_url, err := base64.URLEncoding.DecodeString(target_url)
+	task := &MonitorTask{
+		Url: string(decode_url),
+		Keyword: keyword,
+		RegistrationId: registration_id,
+	}
+	go spider.DeleteMonitorTask(task)
+	writeResult(w, r, "task has deleted.", nil)
 }
 
 func CustomSearch(w http.ResponseWriter, r *http.Request) {
