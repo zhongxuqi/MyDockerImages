@@ -24,7 +24,7 @@ func init() {
 func loop() {
   for {
     fmt.Println("go to sleep.")
-    time.Sleep(5 * time.Minute)
+    time.Sleep(time.Minute)
     fmt.Println("go to wake.")
     mutex.Lock()
 
