@@ -29,11 +29,11 @@ func loop() {
     mutex.Lock()
 
     for i, task := range mTaskList {
-      task.Life--
       fmt.Println("begin: ", task.Url)
       if time.Now().Before(task.Time) {
         continue
       }
+      task.Life--
       for time.Now().After(task.Time) {
         task.Time = task.Time.Add(2 * time.Hour)
       }
