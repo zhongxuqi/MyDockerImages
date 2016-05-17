@@ -41,6 +41,10 @@ func (result *UrlResult) ToString() (str string) {
   return
 }
 
+const (
+  MONITOR_TASK_LIFE_DEFAULT = 25
+)
+
 type MonitorTask struct {
   Url string
   Keyword string

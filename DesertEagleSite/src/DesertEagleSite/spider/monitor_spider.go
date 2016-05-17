@@ -8,7 +8,7 @@ import (
   . "DesertEagleSite/bean"
   "DesertEagleSite/util"
   "DesertEagleSite/wordtool"
-  "DesertEagleSite/evaluator"
+  // "DesertEagleSite/evaluator"
   "github.com/PuerkitoBio/goquery"
   "DesertEagleSite/push_manager"
 )
@@ -61,8 +61,8 @@ func loop() {
         mutex.Lock()
     		continue
     	}
-      subtask.Eval = evaluator.EvaluateContentByKeyWords(doc.Find("body").Text(), subtask.Task.Keywords)
-      response.ResultData = append(response.ResultData, subtask)
+      //subtask.Eval = evaluator.EvaluateContentByKeyWords(doc.Find("body").Text(), subtask.Task.Keywords)
+      //response.ResultData = append(response.ResultData, subtask)
 
       // parser a tag from url
       UrlList := make([]DataItem, 0)
