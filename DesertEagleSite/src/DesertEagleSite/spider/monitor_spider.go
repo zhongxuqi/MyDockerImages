@@ -164,6 +164,14 @@ func GetMonitorResultByKey(mapkey string) MonitorResponse {
   }
 }
 
+func GetMonitorTaskList() []MonitorTask {
+  taskList := make([]MonitorTask, 0)
+  for _, item := range mTaskList {
+    taskList = append(taskList, *item)
+  }
+  return taskList
+}
+
 func DeleteMonitorTaskByIndex(index int) {
   tmpList := make([]*MonitorTask, 0)
   for i, item := range mTaskList {

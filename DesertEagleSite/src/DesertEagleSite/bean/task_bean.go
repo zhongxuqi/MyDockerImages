@@ -48,7 +48,7 @@ type MonitorTask struct {
   RegistrationId string
   RespMapKey string
   Time time.Time `json:"-"`
-  Life int `json:"-"`
+  Life int
 }
 
 func (task *MonitorTask) IsEqual(another *MonitorTask) bool {
@@ -68,4 +68,9 @@ type MonitorResponse struct {
   Keyword string
   Task MonitorTask
   ResultData []UrlResult
+}
+
+type MonitorListResponse struct {
+  BaseResponse
+  Tasks []MonitorTask
 }

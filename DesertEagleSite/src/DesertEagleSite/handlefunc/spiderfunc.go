@@ -29,6 +29,7 @@ func initSpider() {
 	urlFuncMap["app/get_monitor_result"] = GetMonitorResult
 	urlFuncMap["app/delete_monitor_task"] = DeleteMonitorTask
 	urlFuncMap["app/custom_search"] = CustomSearch
+	urlFuncMap["app/monitor_search/tasks"] = GetMonitorTasks
 }
 
 func writeSpiderResult(w http.ResponseWriter, r *http.Request, resItems []DataItem, nextPage string, err error) {
@@ -144,6 +145,15 @@ func GetMonitorResult(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respBytes, _ := json.Marshal(spider.GetMonitorResultByKey(mapkey))
+	w.Write(respBytes)
+}
+
+func GetMonitorTasks(w http.ResponseWriter, r *http.Request) {
+	var response MonitorListResponse
+	response.Status = "200"
+	response.Message = "success"
+	response.Tasks = spider.GetMonitorTaskList()
+	respBytes, _ := json.Marshal(response)
 	w.Write(respBytes)
 }
 
