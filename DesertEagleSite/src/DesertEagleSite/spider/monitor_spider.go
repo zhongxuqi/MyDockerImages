@@ -40,12 +40,12 @@ func loop() {
       mTaskList[i] = task
 
       // get response struct
-      resp, ok := mMonitorResultMap[task.RespMapKey]
+      response, ok := mMonitorResultMap[task.RespMapKey]
       if !ok {
         DeleteMonitorTaskByIndex(i)
         continue
       }
-      resp.ResultData = make([]UrlResult, 0)
+      response.ResultData = make([]UrlResult, 0)
 
       // eval main url
       subtask := UrlResult{}
@@ -62,7 +62,7 @@ func loop() {
     		continue
     	}
       subtask.Eval = evaluator.EvaluateContentByKeyWords(doc.Find("body").Text(), subtask.Task.Keywords)
-      resp.ResultData = append(resp.ResultData, subtask)
+      response.ResultData = append(response.ResultData, subtask)
 
       // parser a tag from url
       UrlList := make([]DataItem, 0)
@@ -85,7 +85,7 @@ func loop() {
 
       // store the response to map
       mapKey := task.RegistrationId + "-" + util.GetFormatTimeNow()
-      var response MonitorResponse
+      task.RespMapKey = mapKey
       response.ResultData = make([]UrlResult, 0)
       for _, item := range resultList {
         fmt.Println(item.ToString())
@@ -117,7 +117,7 @@ func loop() {
 func SubmitMonitorTask(task *MonitorTask) bool {
   for _, item := range mTaskList {
     if task.IsEqual(item) {
-      item.Life = 25
+      item.Life = MONITOR_TASK_LIFE_DEFAULT
       return false
     }
   }
@@ -126,7 +126,7 @@ func SubmitMonitorTask(task *MonitorTask) bool {
   mutex.Lock()
   task.Time = time.Now()
   task.Keywords = wordtool.SplitContent2Words(task.Keyword)
-  task.Life = 25
+  task.Life = MONITOR_TASK_LIFE_DEFAULT
   mTaskList = append(mTaskList, task)
   mutex.Unlock()
   fmt.Println(len(mTaskList))
@@ -154,7 +154,7 @@ func SubmitRawMonitorTask(keyword, registration_id, target_url string) {
 func GetMonitorResultByKey(mapkey string) MonitorResponse {
   resp, ok := mMonitorResultMap[mapkey]
   if ok {
-    delete(mMonitorResultMap, mapkey)
+    // delete(mMonitorResultMap, mapkey)
     return resp
   } else {
     var response MonitorResponse
