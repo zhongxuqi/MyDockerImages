@@ -81,7 +81,7 @@ func ConvBytes2Reader(data []byte) (*bytes.Reader) {
 func GetFormatTimeNow() string {
   t := time.Now()
   return strconv.Itoa(t.Year()) + "-" + t.Month().String() + "-" + strconv.Itoa(t.Day()) +
-    "-" + strconv.Itoa(t.Hour()) + "-" + strconv.Itoa(t.Second())
+    "-" + strconv.Itoa(t.Hour()) + "-" + strconv.Itoa(t.Minute()) + "-" + strconv.Itoa(t.Second())
 }
 
 func ConvObject2Json(o interface{}) string {
